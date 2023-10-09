@@ -1,2 +1,26 @@
 # torch-splatting
-A pure pytorch implementation of 3D gaussian splatting
+A pure pytorch implementation of 3D gaussian splatting. 
+
+## Train
+clone the repo
+'''
+git clone https://github.com/graphdeco-inria/gaussian-splatting --recursive
+'''
+and run
+'''python
+python train.py
+'''
+
+
+Tile-based rendering is implemeted. Because running loop for python is slow, it uses 64x64-sized tile instead of 16x16 as 3DGSS did. The training time is about 2 hours for 512x512 resolution image for 30k iterartions, tested on a RTX 2080Ti. The number of 3D gaussians is fixed, of 16384 points. Under this setting, it matchs the original diff-gaussian-splatting implementation (~39 PSNR on my synthetic data).
+
+Stay Tuned.
+
+
+## Reference
+
+https://github.com/graphdeco-inria/gaussian-splatting/tree/main
+
+https://github.com/graphdeco-inria/diff-gaussian-rasterization
+
+https://github.com/openai/point-e/tree/main/point_e
