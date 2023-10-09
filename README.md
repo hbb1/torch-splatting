@@ -5,7 +5,7 @@ A pure pytorch implementation of 3D gaussian splatting.
 clone the repo
 
 ```bash
-git clone https://github.com/graphdeco-inria/gaussian-splatting --recursive
+git clone https://github.com/hbb1/torch-splatting.git --recursive
 ```
 
 and run
