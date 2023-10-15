@@ -89,8 +89,8 @@ def build_covariance_2d(
     t = (mean3d @ viewmatrix[:3,:3]) + viewmatrix[-1:,:3]
 
     # truncate the influences of gaussians far outside the frustum.
-    tx = (t[..., 0] / t[..., 2]).clip(min=-tan_fovx*1.3, max=tan_fovx*1.3)
-    ty = (t[..., 0] / t[..., 2]).clip(min=-tan_fovy*1.3, max=tan_fovy*1.3)
+    tx = (t[..., 0] / t[..., 2]).clip(min=-tan_fovx*1.3, max=tan_fovx*1.3) * t[..., 0]
+    ty = (t[..., 1] / t[..., 2]).clip(min=-tan_fovy*1.3, max=tan_fovy*1.3) * t[..., 1]
     tz = t[..., 2]
 
     # Eq.29 locally affine transform 
