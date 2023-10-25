@@ -1,3 +1,5 @@
 *.ply
 /result
 **/__pycache__/**
+gsplat
+vis
