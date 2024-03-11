@@ -206,7 +206,7 @@ class GaussRenderer(nn.Module):
                     + dx[:,:,0]*dx[:,:,1] * sorted_conic[:, 1, 0]))
                 
                 alpha = (gauss_weight[..., None] * sorted_opacity[None]).clip(max=0.99) # B P 1
-                T = torch.cat([torch.ones_like(alpha[:,:1]), 1-alpha[:,1:]], dim=1).cumprod(dim=1)
+                T = torch.cat([torch.ones_like(alpha[:,:1]), 1-alpha[:,-1:]], dim=1).cumprod(dim=1)
                 acc_alpha = (alpha * T).sum(dim=1)
                 tile_color = (T * alpha * sorted_color[None]).sum(dim=1) + (1-acc_alpha) * (1 if self.white_bkgd else 0)
                 tile_depth = ((T * alpha) * sorted_depths[None,:,None]).sum(dim=1)
@@ -239,6 +239,8 @@ class GaussRenderer(nn.Module):
             mean_ndc, mean_view, in_mask = projection_ndc(means3D, 
                     viewmatrix=camera.world_view_transform, 
                     projmatrix=camera.projection_matrix)
+            mean_ndc = mean_ndc[in_mask]
+            mean_view = mean_view[in_mask]
             depths = mean_view[:,2]
         
         with prof("build color"):
