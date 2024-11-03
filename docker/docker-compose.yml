@@ -1,0 +1,15 @@
+services:
+  torch-splatting:
+    build: .
+    working_dir: /opt/torch-splatting
+    volumes:
+      - ../:/opt/torch-splatting
+      - ./result:/opt/torch-splatting/result
+      - ./entrypoint.sh:/entrypoint.sh
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+volumes:
+  B075X65R3X:
