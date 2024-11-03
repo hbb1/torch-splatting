@@ -4,7 +4,7 @@ services:
     working_dir: /opt/torch-splatting
     volumes:
       - ../:/opt/torch-splatting
-      - ./result/test:/opt/torch-splatting/result/test
+      - ./result:/opt/torch-splatting/result
       - ./entrypoint.sh:/entrypoint.sh
     deploy:
       resources:
