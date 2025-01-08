@@ -1,0 +1,18 @@
+name: torch-splatting
+channels:
+  - pytorch
+  - nvidia
+  - defaults
+dependencies:
+  - cuda-toolkit #install nvcc to build simple-knn
+  - python=3.11
+  - pytorch
+  - pytorch-cuda
+  - pip
+  - torchaudio
+  - torchvision
+  - pip:
+      - accelerate
+      - einops
+      - imageio
+      - submodules/simple-knn
