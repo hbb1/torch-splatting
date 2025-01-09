@@ -1,3 +1,4 @@
+import math
 import time
 
 import torch
@@ -85,11 +86,15 @@ if __name__ == '__main__':
         [0, 0, 1, 0],
         [0, 0, 0, 1]
     ]).cuda()
+    assert intrinsic[0, 2] == W/2, "change scale instead"
 
     scale = .5
     intrinsic[:2, :4]*=scale
     W*=scale
     H*=scale
+
+    fov_h = math.degrees(2 * math.atan2(intrinsic[0, 2], intrinsic[0, 0]))
+    print(f"intrinsic {int(W)}x{int(H)} - camera {fov_h:.1f}°")
 
     # colmap orientation (see data_utils.py read_camera)
     c2w = torch.tensor([
