@@ -15,4 +15,5 @@ dependencies:
       - accelerate
       - einops
       - imageio
+      - plyfile
       - submodules/simple-knn

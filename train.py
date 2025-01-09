@@ -73,7 +73,7 @@ class GSSTrainer(Trainer):
         image = np.concatenate([rgb, rgb_pd], axis=1)
         image = np.concatenate([image, depth], axis=0)
         utils.imwrite(str(self.results_folder / f'image-{self.step}.png'), image)
-
+        self.model.save_ply(self.results_folder / f'splats-{self.step}.ply')
 
 if __name__ == "__main__":
     device = 'cuda'
