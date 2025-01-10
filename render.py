@@ -60,24 +60,8 @@ def load_ply_model(path):
     return model
 
 
-def create_camera_from_params(intrinsic_matrix, pose_matrix, width, height):
-    """Create camera from provided intrinsic and pose parameters."""
-    intrinsic = np.eye(4)
-    intrinsic[:3, :3] = np.array(intrinsic_matrix)
-
-    c2w = np.array(pose_matrix)
-
-    return torch.tensor(intrinsic, dtype=torch.float32).cuda(), torch.tensor(c2w, dtype=torch.float32).cuda()
-
-
-if __name__ == '__main__':
-    ply_path = 'result/test/splats-200.ply'
-    output_path = 'result/test/image2-200b.png'
-
-    # Load the model
-    print(f"Loading PLY file from {ply_path}")
-    model = load_ply_model(ply_path)
-
+ # Inline intrinsic/intrinsic from images[0] of B075X65R3X/info.json
+def get_camera_params():
     W = 512
     H = 512
     intrinsic = torch.tensor([
@@ -86,15 +70,15 @@ if __name__ == '__main__':
         [0, 0, 1, 0],
         [0, 0, 0, 1]
     ]).cuda()
-    assert intrinsic[0, 2] == W/2, "change scale instead"
+    assert intrinsic[0, 2] == W / 2, "change scale instead"
 
     scale = .5
-    intrinsic[:2, :4]*=scale
-    W*=scale
-    H*=scale
+    intrinsic[:2, :4] *= scale
+    W *= scale
+    H *= scale
 
     fov_h = math.degrees(2 * math.atan2(intrinsic[0, 2], intrinsic[0, 0]))
-    print(f"intrinsic {int(W)}x{int(H)} - camera {fov_h:.1f}°")
+    print(f"intrinsic {int(W)}x{int(H)} - hor fov={fov_h:.1f}°")
 
     # colmap orientation (see data_utils.py read_camera)
     c2w = torch.tensor([
@@ -103,6 +87,18 @@ if __name__ == '__main__':
         [1.0933868e-08, -.66614062, -.74582618, 1.4916525],
         [0, 0, 0, 1]
     ]).cuda()
+    return W, H, intrinsic, c2w
+
+
+if __name__ == '__main__':
+    ply_path = 'result/test/splats-200.ply'
+    output_path = 'result/test/image2-200.png'
+
+    # Load the model
+    print(f"Loading PLY file from {ply_path}")
+    model = load_ply_model(ply_path)
+
+    W, H, intrinsic, c2w = get_camera_params()
 
     camera = Camera(width=W, height=H, intrinsic=intrinsic, c2w=c2w)
 
