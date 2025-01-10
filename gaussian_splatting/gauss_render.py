@@ -160,7 +160,7 @@ class GaussRenderer(nn.Module):
         self.active_sh_degree = active_sh_degree
         self.debug = False
         self.white_bkgd = white_bkgd
-        self.pix_coord = torch.stack(torch.meshgrid(torch.arange(256), torch.arange(256), indexing='xy'), dim=-1).to('cuda')
+        self.pix_coord = None
         
     
     def build_color(self, means3D, shs, camera):
@@ -173,7 +173,10 @@ class GaussRenderer(nn.Module):
     def render(self, camera, means2D, cov2d, color, opacity, depths):
         radii = get_radius(cov2d)
         rect = get_rect(means2D, radii, width=camera.image_width, height=camera.image_height)
-        
+
+        if(self.pix_coord is None):
+            self.pix_coord = torch.stack(torch.meshgrid(torch.arange(camera.image_width), torch.arange(camera.image_height), indexing='xy'), dim=-1).to('cuda')
+
         self.render_color = torch.ones(*self.pix_coord.shape[:2], 3).to('cuda')
         self.render_depth = torch.zeros(*self.pix_coord.shape[:2], 1).to('cuda')
         self.render_alpha = torch.zeros(*self.pix_coord.shape[:2], 1).to('cuda')
@@ -239,6 +242,7 @@ class GaussRenderer(nn.Module):
             mean_ndc, mean_view, in_mask = projection_ndc(means3D, 
                     viewmatrix=camera.world_view_transform, 
                     projmatrix=camera.projection_matrix)
+            assert in_mask.any(), "No points in the frustum"
             mean_ndc = mean_ndc[in_mask]
             mean_view = mean_view[in_mask]
             depths = mean_view[:,2]
